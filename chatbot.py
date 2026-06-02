@@ -10,7 +10,7 @@ def main() -> None:
     pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
 
     print("=" * 50)
-    print("  Voces Híbridas  |  Ctrl+C para detener")
+    print("  Voces Híbrides  |  Ctrl+C para detener")
     print("=" * 50)
 
     voice_wav = grabar_voz()

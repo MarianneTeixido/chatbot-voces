@@ -15,7 +15,7 @@ def ask_ollama(messages: list) -> str:
         return ""
 
     full_text = ""
-    print("\nAsistente: ", end="", flush=True)
+    print("\nAgencia: ", end="", flush=True)
 
     for line in resp.iter_lines():
         if not line:

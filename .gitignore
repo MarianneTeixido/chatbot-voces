@@ -2,3 +2,5 @@ chatvenv/
 __pycache__/
 *.wav
 .env
+ollama_start.bat
+ollama_stop.bat

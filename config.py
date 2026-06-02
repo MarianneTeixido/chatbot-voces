@@ -1,10 +1,14 @@
 OLLAMA_URL     = "http://localhost:11434/api/chat"
 ALLTALK_URL    = "http://localhost:7851/api/tts-generate"
-OLLAMA_MODEL   = "llama3.2"
+OLLAMA_MODEL   = "mistral"
 VOICES_DIR     = "voices"
 VOICE_TEMP_WAV = "voices/voz_temp.wav"
 RECORD_DURATION = 15          # segundos
 LANGUAGE       = "es"
+
+# Índice del dispositivo de entrada. None = usar el dispositivo por defecto del sistema.
+# Opciones Soundcraft detectadas: 1 (Signature Series), 82 (2-channel Audio Driver Input)
+AUDIO_INPUT_DEVICE = 1
 
 SYSTEM_PROMPT = (
     "Eres una entidad que habita en el espacio entre la voz humana y su simulacro. "

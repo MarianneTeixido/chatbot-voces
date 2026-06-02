@@ -5,7 +5,7 @@ import numpy as np
 import scipy.io.wavfile as wav
 import sounddevice as sd
 
-from config import RECORD_DURATION, VOICE_TEMP_WAV, VOICES_DIR
+from config import AUDIO_INPUT_DEVICE, RECORD_DURATION, VOICE_TEMP_WAV, VOICES_DIR
 
 SAMPLE_RATE = 44100
 
@@ -24,13 +24,14 @@ def grabar_voz(duracion: int = RECORD_DURATION, path_salida: str = VOICE_TEMP_WA
         samplerate=SAMPLE_RATE,
         channels=1,
         dtype="int16",
+        device=AUDIO_INPUT_DEVICE,
     )
 
     for seg in range(duracion, 0, -1):
         print(f"  {seg} seg restantes...   ", end="\r", flush=True)
         time.sleep(1)
 
-    sd.wait()
+    sd.stop()
     print("\n  [Grabación completada]")
 
     wav.write(path_salida, SAMPLE_RATE, audio)
