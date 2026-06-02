@@ -14,6 +14,7 @@ def speak(text: str, voice_wav: str) -> None:
         return
 
     voice_wav = os.path.abspath(voice_wav)
+    print(f"[TTS] Usando voz: {voice_wav} (existe={os.path.isfile(voice_wav)})")
 
     form_data = {
         "text_input":            text,
@@ -48,6 +49,7 @@ def speak(text: str, voice_wav: str) -> None:
         print("[Error TTS] Respuesta no es JSON válido")
         return
 
+    print(f"[TTS] Respuesta AllTalk: {result}")
     audio_path = result.get("output_file_path", "")
     if audio_path and os.path.isfile(audio_path):
         _play_local(audio_path)

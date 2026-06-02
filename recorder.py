@@ -34,4 +34,19 @@ def grabar_voz(duracion: int = RECORD_DURATION, path_salida: str = VOICE_TEMP_WA
     print("\n  [Grabación completada]")
 
     wav.write(path_salida, SAMPLE_RATE, audio)
+
+    # Diagnóstico: verificar que el audio tiene señal real
+    max_amp = int(np.max(np.abs(audio)))
+    size_kb = os.path.getsize(path_salida) // 1024
+    print(f"  [Diagnóstico] Amplitud máxima: {max_amp} (>500 = hay voz)")
+    print(f"  [Diagnóstico] Archivo: {os.path.abspath(path_salida)} ({size_kb} KB)")
+    if max_amp < 500:
+        print("  [ADVERTENCIA] La grabación parece silencio. Verifica el micrófono.")
+        print("  Dispositivos de entrada disponibles:")
+        for d in sd.query_devices():
+            if d["max_input_channels"] > 0:
+                print(f"    [{d['index']}] {d['name']}")
+    else:
+        print("  [OK] Audio grabado correctamente.")
+
     return path_salida
