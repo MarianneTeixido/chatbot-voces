@@ -29,7 +29,7 @@ def speak(text: str, voice_wav: str) -> None:
         "autoplay":              "false",
         "autoplay_volume":       "0.8",
         "speed":                 "1.0",
-        "pitch":                 "0.5",
+        "pitch":                 "0.6",
         "temperature":           "0.1",
         "repetition_penalty":    "10.0",
     }

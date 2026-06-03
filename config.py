@@ -1,6 +1,6 @@
 OLLAMA_URL     = "http://localhost:11434/api/chat"
 ALLTALK_URL    = "http://localhost:7851/api/tts-generate"
-OLLAMA_MODEL   = "mistral"
+OLLAMA_MODEL   = "llama3.2"
 VOICES_DIR     = "voices"
 VOICE_TEMP_WAV = "voices/voz_temp.wav"
 RECORD_DURATION = 15          # segundos
