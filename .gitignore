@@ -1,5 +1,5 @@
 chatvenv/
-referencias/
+referencias/*
 __pycache__/
 *.wav
 .env
