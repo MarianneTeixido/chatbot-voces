@@ -5,3 +5,4 @@ __pycache__/
 .env
 ollama_start.bat
 ollama_stop.bat
+CLAUDE.md
