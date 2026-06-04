@@ -2,8 +2,10 @@ import asyncio
 import base64
 import json
 import os
+import subprocess
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 from typing import Optional
 
 import uvicorn
@@ -40,9 +42,17 @@ async def chat_ws(ws: WebSocket):
         while True:
             msg = await ws.receive()
 
+            # Desconexión limpia: Starlette a veces retorna mensaje en vez de excepción
+            if msg.get("type") == "websocket.disconnect":
+                break
+
             # ── Mensaje binario: audio grabado desde el navegador ─────────
             if msg.get("bytes"):
-                text = await _stt(msg["bytes"])
+                audio_bytes = msg["bytes"]
+                # Descartar grabaciones vacías o demasiado cortas (EBML sin frames)
+                if len(audio_bytes) < 1024:
+                    continue
+                text = await _stt(audio_bytes)
                 if not text:
                     await ws.send_json({"type": "error", "msg": "No se pudo transcribir el audio. Instala openai-whisper."})
                     continue
@@ -59,6 +69,12 @@ async def chat_ws(ws: WebSocket):
                 # Sub-tipo: subir voz de referencia para TTS
                 if payload.get("type") == "set_voice":
                     voice_wav = await _save_voice(payload.get("data", ""))
+                    await ws.send_json({"type": "voice_set"})
+                    continue
+
+                # Sub-tipo: grabar nueva voz para clonar (webm grabado en browser)
+                if payload.get("type") == "clone_voice":
+                    voice_wav = await _save_clone_voice(payload.get("data", ""))
                     await ws.send_json({"type": "voice_set"})
                     continue
 
@@ -92,7 +108,7 @@ async def chat_ws(ws: WebSocket):
                 else:
                     await ws.send_json({"type": "error", "msg": "TTS falló. ¿Está AllTalk corriendo?"})
 
-    except WebSocketDisconnect:
+    except (WebSocketDisconnect, RuntimeError):
         pass
 
 
@@ -145,6 +161,37 @@ async def _save_voice(b64_data: str) -> str:
         return path
     except Exception as e:
         print(f"[Voice Error] {e}")
+        return VOICE_TEMP_WAV
+
+
+# ── Guardar voz grabada desde browser para clonar ────────────────────────────
+
+async def _save_clone_voice(b64_data: str) -> str:
+    os.makedirs("voices", exist_ok=True)
+    try:
+        data = base64.b64decode(b64_data)
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        # ruta absoluta desde el inicio — AllTalk necesita encontrar el archivo
+        out_path = os.path.abspath(os.path.join("voices", f"cloned_{ts}.wav"))
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp:
+            tmp.write(data)
+            tmp_path = tmp.name
+        try:
+            result = subprocess.run(
+                ["ffmpeg", "-y", "-i", tmp_path,
+                 "-acodec", "pcm_s16le", "-ar", "22050", "-ac", "1", out_path],
+                capture_output=True, timeout=30,
+            )
+            if result.returncode != 0:
+                stderr = result.stderr.decode("utf-8", errors="replace")
+                print(f"[Clone Voice] ffmpeg falló (código {result.returncode}):\n{stderr}")
+                return VOICE_TEMP_WAV
+            print(f"[Voice] Voz clonada → {out_path}")
+            return out_path
+        finally:
+            os.unlink(tmp_path)
+    except Exception as e:
+        print(f"[Clone Voice Error] {e}")
         return VOICE_TEMP_WAV
 
 

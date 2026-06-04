@@ -32,7 +32,8 @@ def _build_form(text: str, voice_wav: str) -> dict:
 
 def _fetch_audio(text: str, voice_wav: str) -> Optional[bytes]:
     """Llama a AllTalk y devuelve los bytes del audio generado, o None si falla."""
-    voice_wav = os.path.abspath(voice_wav)
+    if not os.path.isabs(voice_wav):
+        voice_wav = os.path.abspath(voice_wav)
     print(f"[TTS] Usando voz: {voice_wav} (existe={os.path.isfile(voice_wav)})")
 
     try:

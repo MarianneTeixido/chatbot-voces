@@ -239,6 +239,64 @@
     ::-webkit-scrollbar { width: 2px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 2px; }
+
+    /* ============================================================
+       BUBBLE SYSTEM (notificación centrada, todos los temas)
+    ============================================================ */
+    .bubble-system {
+      align-self: center;
+      background: rgba(198,174,238,0.10);
+      border: 1px solid rgba(198,174,238,0.18);
+      color: rgba(198,174,238,0.60);
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 20px; font-family: var(--mono);
+    }
+
+    /* ============================================================
+       MODAL NUEVA VOZ
+    ============================================================ */
+    .voice-modal-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,0.52);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .voice-modal {
+      background: rgba(16,14,24,0.92);
+      backdrop-filter: blur(20px) saturate(1.4); -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 12px; padding: 32px 36px;
+      max-width: 380px; width: 88%;
+      box-shadow: 0 20px 72px rgba(0,0,0,0.55);
+      color: rgba(255,255,255,0.78); font-family: var(--sans);
+    }
+    .voice-modal .modal-title {
+      font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: rgba(198,174,238,0.70); margin-bottom: 16px; font-family: var(--mono);
+    }
+    .voice-modal p {
+      font-size: 13.5px; line-height: 1.75; margin-bottom: 10px;
+    }
+    .voice-modal .modal-note {
+      font-size: 11.5px; color: rgba(255,255,255,0.38); margin-bottom: 26px;
+    }
+    .voice-modal .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-cancel {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 6px; padding: 7px 18px; cursor: pointer;
+      color: rgba(255,255,255,0.46); font-family: var(--mono); font-size: 11px;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+    .modal-cancel:hover { background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.70); }
+    .modal-record {
+      background: rgba(198,174,238,0.14); border: 1px solid rgba(198,174,238,0.30);
+      border-radius: 6px; padding: 7px 22px; cursor: pointer;
+      color: rgba(198,174,238,0.90); font-family: var(--mono); font-size: 11px;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: background 0.2s, color 0.2s;
+    }
+    .modal-record:hover { background: rgba(198,174,238,0.24); color: rgba(198,174,238,1); }
   </style>
 </head>
 <body style="font-family: system-ui">
@@ -306,10 +364,12 @@
         try { return JSON.parse(localStorage.getItem('vh_msgs') || '[]'); }
         catch { return []; }
       });
-      const [input,       setInput]       = useState('');
-      const [status,      setStatus]      = useState('disconnected');
+      const [input,          setInput]          = useState('');
+      const [status,         setStatus]         = useState('disconnected');
       // idle | thinking | speaking | recording
-      const [agentStatus, setAgentStatus] = useState('idle');
+      const [agentStatus,    setAgentStatus]    = useState('idle');
+      const [showVoiceModal, setShowVoiceModal] = useState(false);
+      const [cloneRec,       setCloneRec]       = useState(false);
 
       const wsRef            = useRef(null);
       const logRef           = useRef(null);
@@ -318,6 +378,7 @@
       const analyserRef      = useRef(null);
       const mediaRecorderRef = useRef(null);
       const audioChunksRef   = useRef([]);
+      const cloneChunksRef   = useRef([]);
 
       useEffect(() => {
         try { localStorage.setItem('vh_msgs', JSON.stringify(msgs)); } catch {}
@@ -413,7 +474,10 @@
                 setMsgs(prev => [...prev, { role: 'agent', content: d.msg, error: true }]);
                 return;
               }
-              if (d.type === 'voice_set') return;
+              if (d.type === 'voice_set') {
+                setMsgs(prev => [...prev, { role: 'system', content: 'voz actualizada' }]);
+                return;
+              }
 
               // Compatibilidad con otros formatos
               const text = d.response ?? d.message ?? d.text;
@@ -488,6 +552,41 @@
         if (agentStatus === 'recording') setAgentStatus('idle');
       }, [agentStatus]);
 
+      // Grabación de voz para clonar (flujo separado del STT)
+      const startCloneRec = useCallback(async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const mr = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+          cloneChunksRef.current = [];
+          mr.ondataavailable = (e) => { if (e.data.size > 0) cloneChunksRef.current.push(e.data); };
+          mr.onstop = async () => {
+            stream.getTracks().forEach(tr => tr.stop());
+            const blob = new Blob(cloneChunksRef.current, { type: 'audio/webm' });
+            const buf  = await blob.arrayBuffer();
+            const u8   = new Uint8Array(buf);
+            let bin = '';
+            for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+            const b64 = btoa(bin);
+            if (wsRef.current?.readyState === WebSocket.OPEN) {
+              wsRef.current.send(JSON.stringify({ type: 'clone_voice', data: b64 }));
+            }
+            setCloneRec(false);
+          };
+          mr.start();
+          mediaRecorderRef.current = mr;
+          setCloneRec(true);
+        } catch (e) {
+          console.error('[CloneRec]', e);
+          setCloneRec(false);
+        }
+      }, []);
+
+      const stopCloneRec = useCallback(() => {
+        if (mediaRecorderRef.current?.state === 'recording') {
+          mediaRecorderRef.current.stop();
+        }
+      }, []);
+
       const isRecording = agentStatus === 'recording';
       const isThinking  = agentStatus === 'thinking';
 
@@ -522,9 +621,49 @@
             )}
           </div>
 
-          <button className="hud hud-left clear-btn" onClick={clear} style={{ color: hudColor, opacity: 0.55 }}>
-            limpiar
-          </button>
+          <div className="hud hud-left" style={{ gap: 6 }}>
+            <button className="clear-btn" onClick={clear} style={{ color: hudColor, opacity: 0.55 }}>
+              limpiar
+            </button>
+            {cloneRec ? (
+              <button
+                className="clear-btn"
+                onClick={stopCloneRec}
+                style={{ color: 'rgba(255,100,100,0.80)', opacity: 1, animation: 'recPulse 0.8s ease-in-out infinite' }}
+              >
+                ● detener
+              </button>
+            ) : (
+              <button
+                className="clear-btn"
+                onClick={() => setShowVoiceModal(true)}
+                style={{ color: hudColor, opacity: 0.55 }}
+              >
+                nueva voz
+              </button>
+            )}
+          </div>
+
+          {/* ════════ MODAL NUEVA VOZ ════════ */}
+          {showVoiceModal && (
+            <div className="voice-modal-overlay" onClick={() => setShowVoiceModal(false)}>
+              <div className="voice-modal" onClick={e => e.stopPropagation()}>
+                <div className="modal-title">nueva voz de referencia</div>
+                <p>
+                  La grabación será procesada por un modelo local open-source (AllTalk / XTTS)
+                  que corre en tu máquina.
+                </p>
+                <p className="modal-note">
+                  La muestra es efímera — se usa solo durante esta sesión y no se envía
+                  a ningún servidor externo.
+                </p>
+                <div className="modal-actions">
+                  <button className="modal-cancel" onClick={() => setShowVoiceModal(false)}>cancelar</button>
+                  <button className="modal-record" onClick={() => { setShowVoiceModal(false); startCloneRec(); }}>grabar</button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* ════════ ONÍRICO ════════ */}
           {t.tema === 'onirico' && (
@@ -536,9 +675,11 @@
                   </div>
                 )}
                 {msgs.map((m, i) =>
-                  m.role === 'user'
-                    ? <div key={i} className="bubble bubble-user">{m.content}</div>
-                    : <div key={i} className={`bubble ${m.error ? 'bubble-error' : 'bubble-agent'}`}>{m.content}</div>
+                  m.role === 'system'
+                    ? <div key={i} className="bubble bubble-system">{m.content}</div>
+                    : m.role === 'user'
+                      ? <div key={i} className="bubble bubble-user">{m.content}</div>
+                      : <div key={i} className={`bubble ${m.error ? 'bubble-error' : 'bubble-agent'}`}>{m.content}</div>
                 )}
                 {isThinking && (
                   <div className="bubble bubble-agent" style={{ padding:'10px 15px' }}>
@@ -567,7 +708,9 @@
                   </div>
                 )}
                 {msgs.map((m, i) =>
-                  m.role === 'user' ? (
+                  m.role === 'system' ? (
+                    <div key={i} className="bubble bubble-system" style={{ alignSelf:'flex-start', margin: '4px 0 12px' }}>{m.content}</div>
+                  ) : m.role === 'user' ? (
                     <div key={i} className="term-user">tú: {m.content}</div>
                   ) : (
                     <div key={i}>
@@ -602,7 +745,9 @@
                   </div>
                 )}
                 {msgs.map((m, i) =>
-                  m.role === 'user' ? (
+                  m.role === 'system' ? (
+                    <div key={i} className="bubble bubble-system" style={{ margin: '4px 0 12px' }}>{m.content}</div>
+                  ) : m.role === 'user' ? (
                     <div key={i} className="hib-user">tú: {m.content}</div>
                   ) : (
                     <div key={i}>
