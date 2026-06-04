@@ -10,7 +10,7 @@ import requests
 from config import ALLTALK_URL, LANGUAGE
 
 
-def _build_form(text: str, voice_wav: str) -> dict:
+def _build_form(text: str, voice_wav: str, pitch: int = 0) -> dict:
     return {
         "text_input":            text,
         "text_filtering":        "standard",
@@ -24,20 +24,20 @@ def _build_form(text: str, voice_wav: str) -> dict:
         "autoplay":              "false",
         "autoplay_volume":       "0.8",
         "speed":                 "1.0",
-        "pitch":                 "0",
+        "pitch":                 str(pitch),
         "temperature":           "0.1",
         "repetition_penalty":    "10.0",
     }
 
 
-def _fetch_audio(text: str, voice_wav: str) -> Optional[bytes]:
+def _fetch_audio(text: str, voice_wav: str, pitch: int = 0) -> Optional[bytes]:
     """Llama a AllTalk y devuelve los bytes del audio generado, o None si falla."""
     if not os.path.isabs(voice_wav):
         voice_wav = os.path.abspath(voice_wav)
     print(f"[TTS] Usando voz: {voice_wav} (existe={os.path.isfile(voice_wav)})")
 
     try:
-        resp = requests.post(ALLTALK_URL, data=_build_form(text, voice_wav), timeout=60)
+        resp = requests.post(ALLTALK_URL, data=_build_form(text, voice_wav, pitch), timeout=60)
         if not resp.ok:
             print(f"[Error TTS HTTP] {resp.status_code} — {resp.text[:500]}")
             return None
@@ -72,18 +72,18 @@ def _fetch_audio(text: str, voice_wav: str) -> Optional[bytes]:
     return None
 
 
-def synthesize(text: str, voice_wav: str) -> Optional[bytes]:
+def synthesize(text: str, voice_wav: str, pitch: int = 0) -> Optional[bytes]:
     """Genera audio TTS y devuelve los bytes — para enviar por WebSocket."""
     if not text:
         return None
-    return _fetch_audio(text, voice_wav)
+    return _fetch_audio(text, voice_wav, pitch)
 
 
-def speak(text: str, voice_wav: str) -> None:
+def speak(text: str, voice_wav: str, pitch: int = 0) -> None:
     """Genera audio TTS y lo reproduce localmente — para uso en CLI."""
     if not text:
         return
-    audio = _fetch_audio(text, voice_wav)
+    audio = _fetch_audio(text, voice_wav, pitch)
     if not audio:
         return
     suffix = ".wav"
