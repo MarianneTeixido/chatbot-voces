@@ -24,7 +24,7 @@ def _build_form(text: str, voice_wav: str) -> dict:
         "autoplay":              "false",
         "autoplay_volume":       "0.8",
         "speed":                 "1.0",
-        "pitch":                 "0.6",
+        "pitch":                 "0",
         "temperature":           "0.1",
         "repetition_penalty":    "10.0",
     }

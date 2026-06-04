@@ -58,20 +58,20 @@
       min-height: 260px; max-height: calc(80vh - 58px);
     }
 
-    .bubble { padding: 13px 17px; max-width: 83%; font-family: var(--sans); font-size: 14.5px; line-height: 1.7; }
+    .bubble { padding: 13px 17px; max-width: 83%; font-family: var(--sans); font-size: 18px; line-height: 1.7; }
     .bubble-agent { align-self: flex-start; background: rgba(248,244,255,0.93); color: #26222e; }
-    .bubble-user  { align-self: flex-end;   background: rgba(190,168,230,0.28); color: rgba(255,255,255,0.88); }
+    .bubble-user  { align-self: flex-end;   background: rgba(190,168,230,0.72); color: rgba(255,255,255,0.97); font-size: 18px; }
     .bubble-error { align-self: flex-start; background: rgba(255,80,60,0.10);   color: rgba(255,170,150,0.9);  font-style: italic; }
 
     .input-onirico { display: flex; border-top: 1px solid rgba(255,255,255,0.12); }
     .input-onirico input {
       flex: 1; background: transparent; border: none; outline: none;
-      color: rgba(255,255,255,0.88); font-family: var(--sans); font-size: 14px; padding: 16px 20px;
+      color: rgba(255,255,255,0.88); font-family: var(--sans); font-size: 18px; padding: 16px 20px;
     }
     .input-onirico input::placeholder { color: rgba(255,255,255,0.26); }
     .input-onirico button {
       background: oklch(0.70 0.15 295); border: none; color: white;
-      font-family: var(--sans); font-size: 11px; font-weight: 600;
+      font-family: var(--sans); font-size: 18px; font-weight: 600;
       letter-spacing: 2px; text-transform: uppercase; padding: 0 26px;
       cursor: pointer; transition: background 0.2s;
     }
@@ -97,29 +97,29 @@
 
     .log-terminal {
       flex: 1; overflow-y: auto; padding: 28px 32px 18px;
-      font-family: var(--mono); font-size: 13.5px; line-height: 1.95; color: #c4c4cc;
+      font-family: var(--mono); font-size: 18px; line-height: 1.95; color: #d0d0d8;
       min-height: 260px; max-height: calc(86vh - 58px);
     }
-    .term-user { color: #888896; margin-bottom: 2px; }
+    .term-user { color: #e0e0ec; margin-bottom: 2px; font-size: 18px; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
     .term-agent-name {
       color: #c4c4cc;
       text-shadow: -1.5px 0 0 rgba(255,45,105,0.55), 1.5px 0 0 rgba(0,210,255,0.55);
     }
-    .term-agent-body { color: #aaa8c0; margin-bottom: 20px; white-space: pre-wrap; }
+    .term-agent-body { color: #cccae0; margin-bottom: 20px; white-space: pre-wrap; }
     .term-error      { color: rgba(255,120,100,0.7); margin-bottom: 20px; font-style: italic; }
 
     .input-terminal {
       display: flex; align-items: center; padding: 14px 32px;
       border-top: 1px solid rgba(255,255,255,0.07); gap: 8px;
     }
-    .term-prompt { color: #484850; font-family: var(--mono); font-size: 13.5px; }
+    .term-prompt { color: #484850; font-family: var(--mono); font-size: 18px; }
     .input-terminal input {
       flex: 1; background: transparent; border: none; outline: none;
-      color: #c4c4cc; font-family: var(--mono); font-size: 13.5px; caret-color: #c4c4cc;
+      color: #c4c4cc; font-family: var(--mono); font-size: 18px; caret-color: #c4c4cc;
     }
     .input-terminal button {
       background: none; border: 1px solid rgba(255,255,255,0.14); color: #555560;
-      font-family: var(--mono); font-size: 11px; padding: 4px 12px;
+      font-family: var(--mono); font-size: 18px; padding: 4px 12px;
       cursor: pointer; transition: all 0.15s;
     }
     .input-terminal button:hover { border-color: rgba(255,255,255,0.38); color: #aaa; }
@@ -131,15 +131,15 @@
 
     .log-hibrido {
       flex: 1; overflow-y: auto; padding: 32px 36px 18px;
-      font-family: var(--mono); font-size: 13px; line-height: 2.1;
+      font-family: var(--mono); font-size: 18px; line-height: 2.1;
       min-height: 260px; max-height: calc(82vh - 58px);
     }
-    .hib-user { color: rgba(255,255,255,0.30); margin-bottom: 4px; }
+    .hib-user { color: rgba(255,255,255,0.90); margin-bottom: 4px; font-size: 18px; text-shadow: 0 0 10px rgba(0,0,0,0.9); }
     .hib-agent-name {
       color: rgba(255,255,255,0.88);
       text-shadow: -2px 0 0 rgba(255,45,105,0.44), 2px 0 0 rgba(0,210,255,0.44);
     }
-    .hib-agent-body { color: rgba(218,208,255,0.88); margin-bottom: 22px; }
+    .hib-agent-body { color: rgba(218,208,255,0.96); margin-bottom: 22px; }
     .hib-error      { color: rgba(255,150,130,0.7);  margin-bottom: 22px; font-style: italic; }
 
     .input-hibrido {
@@ -147,15 +147,15 @@
       border-top: 1px solid rgba(255,255,255,0.11);
       padding: 14px 24px; gap: 10px;
     }
-    .hib-prompt { color: rgba(255,255,255,0.18); font-family: var(--mono); font-size: 14px; }
+    .hib-prompt { color: rgba(255,255,255,0.18); font-family: var(--mono); font-size: 18px; }
     .input-hibrido input {
       flex: 1; background: transparent; border: none; outline: none;
-      color: rgba(255,255,255,0.80); font-family: var(--mono); font-size: 13px;
+      color: rgba(255,255,255,0.80); font-family: var(--mono); font-size: 18px;
     }
     .input-hibrido input::placeholder { color: rgba(255,255,255,0.14); }
     .input-hibrido button {
       background: none; border: none; color: rgba(198,174,238,0.58);
-      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      font-family: var(--mono); font-size: 18px; letter-spacing: 1px;
       cursor: pointer; transition: color 0.2s; padding: 4px 6px;
     }
     .input-hibrido button:hover { color: rgba(198,174,238,1); }
@@ -188,10 +188,10 @@
     .clear-btn {
       background: rgba(255,255,255,0.07);
       backdrop-filter: blur(12px) saturate(1.4); -webkit-backdrop-filter: blur(12px) saturate(1.4);
-      border: 1px solid rgba(255,255,255,0.18); border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.22); border-radius: 6px;
       padding: 5px 14px; cursor: pointer;
-      font-size: inherit; letter-spacing: inherit; text-transform: inherit;
-      color: rgba(255,255,255,0.55);
+      font-size: 16px; letter-spacing: inherit; text-transform: inherit;
+      color: rgba(255,255,255,0.85);
       transition: background 0.2s, color 0.2s, border-color 0.2s;
       box-shadow: 0 2px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.12);
     }
@@ -213,7 +213,7 @@
 
     .input-onirico .rec-btn {
       background: oklch(0.70 0.15 295); border: none; color: white;
-      font-family: var(--sans); font-size: 11px; font-weight: 600;
+      font-family: var(--sans); font-size: 18px; font-weight: 600;
       letter-spacing: 2px; text-transform: uppercase; padding: 0 20px;
     }
     .input-onirico .rec-btn:hover    { background: oklch(0.60 0.17 295); }
@@ -221,14 +221,14 @@
 
     .input-terminal .rec-btn {
       background: none; border: 1px solid rgba(255,255,255,0.14); color: #555560;
-      font-family: var(--mono); font-size: 11px; padding: 4px 12px;
+      font-family: var(--mono); font-size: 18px; padding: 4px 12px;
     }
     .input-terminal .rec-btn:hover    { border-color: rgba(255,255,255,0.38); color: #aaa; }
     .input-terminal .rec-btn.recording { border-color: rgba(255,60,60,0.5); color: rgba(255,80,80,0.7); }
 
     .input-hibrido .rec-btn {
       background: none; border: none; color: rgba(198,174,238,0.58);
-      font-family: var(--mono); font-size: 11px; letter-spacing: 1px; padding: 4px 6px;
+      font-family: var(--mono); font-size: 18px; letter-spacing: 1px; padding: 4px 6px;
     }
     .input-hibrido .rec-btn:hover    { color: rgba(198,174,238,1); }
     .input-hibrido .rec-btn.recording { color: rgba(255,100,100,0.8); }
@@ -376,9 +376,11 @@
       const inpRef           = useRef(null);
       const audioCtxRef      = useRef(null);
       const analyserRef      = useRef(null);
-      const mediaRecorderRef = useRef(null);
+      const sttRecorderRef   = useRef(null);   // exclusivo para STT
+      const cloneRecorderRef = useRef(null);   // exclusivo para clone_voice
       const audioChunksRef   = useRef([]);
       const cloneChunksRef   = useRef([]);
+      const recStartRef      = useRef(null);   // timestamp para guard de duración mínima
 
       useEffect(() => {
         try { localStorage.setItem('vh_msgs', JSON.stringify(msgs)); } catch {}
@@ -518,19 +520,24 @@
         inpRef.current?.focus();
       };
 
-      // Grabación de voz
+      // Grabación de voz para STT
       const startRec = useCallback(async () => {
         if (agentStatus === 'recording') return;
+        if (cloneRecorderRef.current?.state === 'recording') return; // no interferir con clone
         initAudio();
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           const mr     = new MediaRecorder(stream, { mimeType: 'audio/webm' });
           audioChunksRef.current = [];
+          recStartRef.current = Date.now();
           mr.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
           mr.onstop = () => {
             stream.getTracks().forEach(tr => tr.stop());
+            const duration = Date.now() - (recStartRef.current ?? 0);
+            if (duration < 300) return; // tap accidental — ignorar
             const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
             blob.arrayBuffer().then(buf => {
+              if (buf.byteLength < 2048) return; // webm vacío — ignorar
               if (wsRef.current?.readyState === WebSocket.OPEN) {
                 wsRef.current.send(buf);
                 setAgentStatus('thinking');
@@ -538,7 +545,7 @@
             });
           };
           mr.start();
-          mediaRecorderRef.current = mr;
+          sttRecorderRef.current = mr;
           setAgentStatus('recording');
         } catch (e) {
           console.error('[Mic]', e);
@@ -546,8 +553,8 @@
       }, [agentStatus, initAudio]);
 
       const stopRec = useCallback(() => {
-        if (mediaRecorderRef.current?.state === 'recording') {
-          mediaRecorderRef.current.stop();
+        if (sttRecorderRef.current?.state === 'recording') {
+          sttRecorderRef.current.stop();
         }
         if (agentStatus === 'recording') setAgentStatus('idle');
       }, [agentStatus]);
@@ -573,7 +580,7 @@
             setCloneRec(false);
           };
           mr.start();
-          mediaRecorderRef.current = mr;
+          cloneRecorderRef.current = mr;
           setCloneRec(true);
         } catch (e) {
           console.error('[CloneRec]', e);
@@ -582,15 +589,15 @@
       }, []);
 
       const stopCloneRec = useCallback(() => {
-        if (mediaRecorderRef.current?.state === 'recording') {
-          mediaRecorderRef.current.stop();
+        if (cloneRecorderRef.current?.state === 'recording') {
+          cloneRecorderRef.current.stop();
         }
       }, []);
 
       const isRecording = agentStatus === 'recording';
       const isThinking  = agentStatus === 'thinking';
 
-      const hudColor = 'rgba(255,255,255,0.46)';
+      const hudColor = 'rgba(255,255,255,0.85)';
       const dotClass = ({ connected:'s-connected', disconnected:'s-disconnected', connecting:'s-connecting' })[status] ?? 's-disconnected';
       const isEmpty  = msgs.length === 0;
 
@@ -622,7 +629,7 @@
           </div>
 
           <div className="hud hud-left" style={{ gap: 6 }}>
-            <button className="clear-btn" onClick={clear} style={{ color: hudColor, opacity: 0.55 }}>
+            <button className="clear-btn" onClick={clear} style={{ color: hudColor }}>
               limpiar
             </button>
             {cloneRec ? (
@@ -637,7 +644,7 @@
               <button
                 className="clear-btn"
                 onClick={() => setShowVoiceModal(true)}
-                style={{ color: hudColor, opacity: 0.55 }}
+                style={{ color: hudColor }}
               >
                 nueva voz
               </button>

@@ -6,3 +6,5 @@ __pycache__/
 ollama_start.bat
 ollama_stop.bat
 CLAUDE.md
+front/
+server.py
